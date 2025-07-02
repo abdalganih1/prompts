@@ -2841,4 +2841,367 @@ public class PorcupineService extends Service {
         }
 
         try {
-            SmsManager smsManager
+            SmsManager smsManager = SmsManager.getDefault();
+            ArrayList<String> parts = smsManager.divideMessage(messageContent);
+            smsManager.sendMultipartTextMessage(recipientPhoneNumber, null, parts, null, null);
+            Log.i(TAG, "sendActionMessage: SMS sent successfully to " + recipientPhoneNumber);
+        } catch (Exception e) {
+            Log.e(TAG, "sendActionMessage: Failed to send SMS to " + recipientPhoneNumber, e);
+            mainThreadHandler.post(() -> Toast.makeText(getApplicationContext(), "فشل إرسال الرسالة إلى " + recipientPhoneNumber + ": " + e.getMessage(), Toast.LENGTH_LONG).show());
+        }
+    }
+    // Optional: send a message back to the user who triggered the alert
+    private void sendActionMessageToUser(String userPhoneNumber, String messageContent) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            Log.e(TAG, "sendActionMessageToUser: SEND_SMS permission missing!");
+            return;
+        }
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            ArrayList<String> parts = smsManager.divideMessage(messageContent);
+            smsManager.sendMultipartTextMessage(userPhoneNumber, null, parts, null, null);
+            Log.i(TAG, "sendActionMessageToUser: SMS sent to user " + userPhoneNumber);
+        } catch (Exception e) {
+            Log.e(TAG, "sendActionMessageToUser: Failed to send SMS to user " + userPhoneNumber, e);
+        }
+    }
+
+    // ... (باقي دوال الخدمة) ...
+}
+```
+
+---
+
+### **الجزء السادس: ملفات XML للواجهات الرئيسية (مقتطفات / أمثلة)**
+
+**ملاحظة:** سأقدم أمثلة بسيطة لهياكل `layout` XML. ستحتاج إلى تصميمها وتخصيصها بشكل كامل لتناسب جمالية مشروعك.
+
+#### `res/layout/activity_login.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    tools:context=".activity.LoginActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="تسجيل الدخول"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <EditText
+        android:id="@+id/et_login_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="رقم الهاتف"
+        android:inputType="phone"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_edittext_background"/> <!-- افترض وجود هذا الـ drawable -->
+
+    <EditText
+        android:id="@+id/et_login_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="كلمة المرور"
+        android:inputType="textPassword"
+        android:padding="12dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/rounded_edittext_background"/>
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="تسجيل الدخول"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_register_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ليس لديك حساب؟ سجل الآن"
+        android:textColor="@color/design_default_color_primary"
+        android:clickable="true"
+        android:focusable="true"/>
+
+</LinearLayout>
+```
+
+#### `res/layout/activity_register.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    tools:context=".activity.RegisterActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="إنشاء حساب جديد"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <EditText
+        android:id="@+id/et_first_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="الاسم الأول"
+        android:inputType="textPersonName"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/rounded_edittext_background"/>
+
+    <EditText
+        android:id="@+id/et_last_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="الكنية"
+        android:inputType="textPersonName"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/rounded_edittext_background"/>
+
+    <EditText
+        android:id="@+id/et_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="رقم الهاتف (09XXXXXXXX)"
+        android:inputType="phone"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/rounded_edittext_background"/>
+
+    <EditText
+        android:id="@+id/et_residence"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="مكان السكن"
+        android:inputType="text"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/rounded_edittext_background"/>
+
+    <EditText
+        android:id="@+id/et_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="كلمة المرور (6 أحرف فأكثر)"
+        android:inputType="textPassword"
+        android:padding="12dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/rounded_edittext_background"/>
+
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="إنشاء الحساب"
+        android:padding="12dp"/>
+
+</LinearLayout>
+```
+
+#### `res/layout/activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp"
+    tools:context=".activity.MainActivity">
+
+    <TextView
+        android:id="@+id/tv_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="مرحبًا أيها المستخدم!"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- قسم الإحصائيات (مخفي عن المستخدم العادي، لكن هنا للعرض) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_card_background"
+        android:padding="16dp"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="إحصائيات البلاغات:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_total_alerts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="عدد البلاغات الإجمالي: 0"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tv_real_alerts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="عدد البلاغات الحقيقية: 0"
+            android:textSize="16sp"
+            android:textColor="@android:color/holo_green_dark"/>
+
+        <TextView
+            android:id="@+id/tv_false_alerts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="عدد البلاغات الكاذبة: 0"
+            android:textSize="16sp"
+            android:textColor="@android:color/holo_red_dark"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_start_porcupine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="تشغيل الاستماع (بواسطة Porcupine)"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btn_stop_porcupine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="إيقاف الاستماع"
+        android:padding="12dp"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btn_view_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="عرض سجل البلاغات"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btn_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="الإعدادات (الكلمات والأرقام)"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="تسجيل الخروج"
+        android:padding="12dp"
+        android:backgroundTint="@android:color/holo_red_light"/>
+
+</LinearLayout>
+```
+
+#### `res/layout/activity_alert_log.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".activity.AlertLogActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="سجل البلاغات"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_alert_log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_alerts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"/>
+
+</LinearLayout>
+```
+
+---
+
+#### `res/drawable/rounded_edittext_background.xml` (مثال بسيط لـ drawable)
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="8dp" />
+    <solid android:color="@android:color/white" />
+    <stroke
+        android:width="1dp"
+        android:color="#CCCCCC" />
+</shape>
+```
+
+#### `res/drawable/rounded_card_background.xml` (مثال بسيط لـ drawable)
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="12dp" />
+    <solid android:color="#F5F5F5" />
+    <stroke
+        android:width="1dp"
+        android:color="#E0E0E0" />
+</shape>
+```
+
+---
+
+**ملاحظات أخيرة:**
+
+*   **`SettingsActivity.java` و `KeywordLinkAdapter.java` و `list_item_keyword_link.xml`:** لم أقم بإنشائها لتجنب الإطالة المفرطة، لكن يمكنك استخدام نفس نمط `AlertLogActivity` و `AlertLogAdapter` لإنشائها. ستحتاج إلى `KeywordDao` و `EmergencyNumberDao` و `KeywordNumberLinkDao` داخل `SettingsActivity` لإدارة الكلمات والأرقام والروابط.
+*   **ملفات Porcupine (`.ppn`, `.pv`):** تأكد من وجود ملف `marhaban_android.ppn` وأي ملفات `.ppn` افتراضية أخرى (مثل `default_emergency.ppn`)، بالإضافة إلى ملف `porcupine_params_ar.pv` في مجلد `assets`. الأسماء في `DatabaseHelper.java` يجب أن تتطابق مع أسماء الملفات الفعلية في `assets`.
+*   **فحص الأذونات:** تأكد من أن `AndroidManifest.xml` يحتوي على جميع الأذونات اللازمة كما ذكرنا في الأقسام السابقة.
+*   **الخطوات التالية للتطوير:**
+    1.  إنشاء تصميمات XML المفقودة (مثل `activity_settings.xml`).
+    2.  تخصيص الواجهات لتناسب التصميم الجمالي الذي تريده.
+    3.  تنفيذ `SettingsActivity` للسماح للمستخدمين بإضافة/حذف كلماتهم وأرقامهم وربطها وتجربتها.
+    4.  اختبار كل وظيفة على حدة (التسجيل، تسجيل الدخول، بدء/إيقاف الخدمة، اكتشاف الكلمة، إرسال الرسالة، عرض السجل).
+    5.  **الأمان:** استبدال `PasswordHasher` الفوري بمكتبة تجزئة قوية.
+
+هذا يمثل بناءً كاملاً لطبقة البيانات ومعظم الواجهات والخدمات المطلوبة. بالتوفيق في مشروع تخرجك!
